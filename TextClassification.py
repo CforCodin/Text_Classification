@@ -22,8 +22,7 @@ newsgroups_test = fetch_20newsgroups(subset='test', categories=categories, remov
 
 X_train, X_test, Y_train, Y_test = train_test_split(newsgroups_train.data, newsgroups_train.target, test_size = 0.3, random_state= 42)
 class_distribution = np.bincount(Y_train)
-plt.bar(range(len(class_distribution)), class_dist)
-ribution)
+plt.bar(range(len(class_distribution)), class_distribution)
 plt.xticks(range(len(class_distribution)), newsgroups_train.target_names, rotation = 45)
 plt.title("Distribution of Classes in Training set")
 plt.xlabel('Class')
