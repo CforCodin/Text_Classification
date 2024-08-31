@@ -1,0 +1,5 @@
+scikit-learn
+pandas  # Likely used for newsgroups_train.target_names
+matplotlib  # Used for visualization
+numpy
+streamlit
