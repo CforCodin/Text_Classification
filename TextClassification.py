@@ -5,7 +5,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
-
+import streamlit as st
 # Load the dataset
 # Load the dataset
 categories = ['alt.atheism', 'soc.religion.christian', 'comp.graphics', 'sci.med']
@@ -45,7 +45,7 @@ X_test_d = vectorizer.transform(X_test)
 
 clf = DecisionTreeClassifier(random_state=42)
 clf.fit(X_train_d, Y_train)
-Y_prd = clf.predict(X_test_d)
+Y_prd = clf.predict(X_test_d) 
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -64,28 +64,35 @@ print("Accuracy:", accuracy_score(Y_test, Y_pdd))
 print("\n Classification Report: \n", classification_report(Y_test, Y_pdd, target_names = newsgroups_test.target_names))
 
 # Example of new, unseen data
-new_documents = [
-    "The graphics on this computer are amazing.",
-    "Atheism is the absence of belief in gods.",
-    "Medicine has advanced significantly over the years.",
-    "Atheism believe in the teachings of Humanity."
-]
+st.title("Text Classification")
+st.subheader("Enter 4 text Documents to classify")
+new_documents = []
+for i in range(4):
+    doc =  st.text_input(f"Enter document {i+1}", key=f"text_input_{i}")
+    new_documents.append(doc)
+    st.write(f"Document {i+1}: ", new_documents[i])
 
-# Step 1: Transform the new documents using the existing vectorizer
-new_documents_tfidf = vectorizer.transform(new_documents)
+new_documents = [doc for doc in new_documents if isinstance(doc, str) and doc.strip()]
+if new_documents:  # Only transform if there are valid documents
+    new_documents_tfidf = vectorizer.transform(new_documents)
 
-# Step 2: Use the trained classifier to predict the class of these new documents
-predictions = clf.predict(new_documents_tfidf)
-predictions2 = clf2.predict(new_documents_tfidf)
+    # Step 2: Use the trained classifier to predict the class of these new documents
+    predictions = clf.predict(new_documents_tfidf)
+    predictions2 = clf2.predict(new_documents_tfidf)
 
-# Step 3: Display the predictions
-print("Predictions from Decision Tree")
-for doc, category in zip(new_documents, predictions):
-    print(f"Document: {doc}")
-    print(f"Predicted category: {newsgroups_train.target_names[category]}\n")
+    # Display the predictions
+    if st.button("Classify using Decision Tree"):
+        st.markdown("### Predictions from Decision Tree")
+        for doc, category in zip(new_documents, predictions):
+            st.success(f"**Document:** {doc}")
+            st.info(f"**Predicted Category:** {newsgroups_train.target_names[category]}")
+            st.markdown("---")  # Separator
 
-print("Predictions from Random Forest")
-for doc, category in zip(new_documents, predictions2):
-    print(f"Document: {doc}")
-    print(f"Predicted category: {newsgroups_train.target_names[category]}\n")
-
+    if st.button("Classify using Random Forest"):
+        st.markdown("### Predictions from Random Forest")
+        for doc, category in zip(new_documents, predictions2):
+            st.success(f"**Document:** {doc}")
+            st.info(f"**Predicted Category:** {newsgroups_train.target_names[category]}")
+            st.markdown("---")  # Separator
+else:
+    st.write("Please enter valid text documents for classification.")
